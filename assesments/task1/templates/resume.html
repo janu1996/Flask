@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Resume</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+            color: #333;
+        }
+
+        nav {
+            background: #222;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            color: #00bcd4;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #222;
+        }
+
+        h2 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .contact {
+            color: #666;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+
+        <!-- Navigation using url_for -->
+        <a href="{{ url_for('about') }}">About</a>
+    </nav>
+
+    <div class="container">
+
+        <h1>Pedapudi Jahnavi</h1>
+
+        <p class="contact">
+            Email: jahnavi@example.com |
+            Phone: +91 XXXXX XXXXX
+        </p>
+
+        <h2>Career Objective</h2>
+        <p>
+            Aspiring Full Stack Developer with a strong foundation in
+            HTML, CSS, JavaScript, React.js, Node.js and Python.
+            Interested in building modern and user-friendly web applications.
+        </p>
+
+        <h2>Education</h2>
+        <ul>
+            <li>B.Tech - Computer Science and Engineering</li>
+        </ul>
+
+        <h2>Technical Skills</h2>
+        <ul>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li>React.js</li>
+            <li>Node.js</li>
+            <li>Python</li>
+            <li>Flask</li>
+            <li>SQL</li>
+        </ul>
+
+        <h2>Projects</h2>
+        <ul>
+            <li>Recruitment Management System</li>
+            <li>Multilingual Medical Assistant</li>
+            <li>Speaker Identification System</li>
+            <li>Travel Explorer</li>
+        </ul>
+
+        <h2>Internship</h2>
+        <p>
+            Artificial Intelligence / Machine Learning Internship at
+            Naval Science and Technological Laboratory (NSTL), DRDO.
+        </p>
+
+    </div>
+
+</body>
+</html>
