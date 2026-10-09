@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Home Page
+        </title>
+    </head>
+    <body>
+        <h1>welcome to  Index Page</h1>
+        <form method="post" action="/postData">
+            <label> Enter your name:</label>
+            <input type="text" name ="name" placeholder="Enter your Name" required/><br/>
+            <label>Enter your Email:</label>
+            <input type="email" name="email"placeholder="Enter your email" required/><br/>
+            <label>Enter your Password:</label>
+            <input type="password" name="password"  placeholder="Enter your Password" required/><br/>
+            <input type="submit" value="submit"/>
+            <span style="color:rgb(253, 24, 24)">{{err}}</span>
+            <span style="color: rgb(5, 247, 5)">{{msg}}</span>
+        </form>
+    </body>
+</html>
