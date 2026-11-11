@@ -706,6 +706,141 @@ def delete_notes(note_id):
         return render_template('notes.html',err=msg,
                                notes=notes)
 
+
+#------------------------------
+#           FILES
+#-----------------------------
+@app.route('/files')
+def myfiles():
+    if "id" not in session:
+        return redirect('/login')
+    if request.method == "GET":
+        return render_template('files.html')
+
+#check file exist in allowed types
+def checkFileAllowed(filename):
+    allow_types = ['pdf','doc','jpeg','jpg','png','svg','csv',
+                   'xml','txt']
+    if "." in filename and filename.split('.')[1] in allow_types:
+        return True
+    else:
+        return False
+
+#check duplicate file
+def checkFileDuplicate(userid,filename):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor = connection.cursor()
+            check_file_duplicate = """select * from file_data
+            where stored_name = %s and user_id=%s;"""
+            cursor.execute(check_file_duplicate,(filename,
+                                                 userid))
+            record = cursor.fetchone()
+            cursor.close()
+            connection.close()
+            if record:
+                return False,"Duplicate file is present"
+            else:
+                return True, "Not a Duplicate file"
+    except Exception as e:
+        return False,f"Exception raised in file: {e}"
+
+#insert files into table
+def UploadFileInDB(userid,filename,stored_name,type,size,path):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor = connection.cursor()
+            insert_filedata_query= """insert into file_data
+            (user_id,original_name,stored_name,mime_type,
+            size_bytes,storage_path) values(%s,%s,%s,%s,%s,%s);"""
+            cursor.execute(insert_filedata_query,
+                           (userid,filename,stored_name,
+                            type,size,path))
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return True,"File Uploaded"
+    except Exception as e:
+        return False,f'Exceptiom raised in File upload:{e}'
+
+#get file metadata by file_id
+def getFileByFileId(fileid):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor = connection.cursor(dictionary=True)
+            get_file_by_user_id = """select * from file_data
+            where id = %s;"""
+            cursor.execute(get_file_by_user_id,(fileid,))
+            file=cursor.fetchone()
+            cursor.close()
+            connection.close()
+            return True,file
+    except Exception as e:
+        return False,f'Exception raised in View files:{e}'
+    
+
+
+
+#upload file route
+@app.route('/files/upload',methods=['GET','POST'])
+def uploadFile():
+    if "id" not in session:
+        return redirect('/login')
+    if request.method == "GET":
+        return render_template('uploadFile.html')
+    #post request
+    if request.method == "POST":
+        #get file from form
+        file = request.form.get('file')
+        if file and file.filename != "":
+            #check file in allowed types
+            filename = file.filename
+            if checkFileAllowed(filename=filename):
+                #check the valid allowed types of files
+                filename_secure=secure_filename(filename)
+                file.save('/upload')
+                file_size = os.path.getsize(filename=
+                                            f'upload/{filename}')
+                file_type = filename.split('.')[1]
+                #insert file metadata in database
+                #get file metadata
+                #store filemeta data in database
+                #redirect to files dashboard
+
+
+    
+#view file
+@app.route('/files/view/<file_id>')
+def viewFile():
+    if "id" not in session:
+        return redirect('/login')
+    pass
+
+#download file
+@app.route('/files/download/<file_id>')
+def downloadFile():
+    if "id" not in session:
+        return redirect('/login')
+    pass
+
+#delete file
+@app.route('/files/delete/<file_id>')
+def deleteFile():
+    if "id" not in session:
+        return redirect('/login')
+    pass
+
+
+
 #logout route
 @app.route("/logout",methods=['GET'])
 def logout():

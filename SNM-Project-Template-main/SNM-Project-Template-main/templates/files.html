@@ -1,0 +1,82 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+My Files - SNS
+{% endblock %}
+
+{% block navmenu %}
+<a href="{{ url_for('dashboard') }}">Dashboard</a>
+<a href="{{ url_for('myfiles') }}">My Files</a>
+<a href="{{ url_for('mynotes') }}">My Notes</a>
+<a href="{{ url_for('profile') }}">Profile</a>
+<a href="{{ url_for('logout') }}">Logout</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>My Files</h1>
+        <p>Upload, manage and access your personal files.</p>
+    </div>
+
+    <a href="{{ url_for('uploadFile') }}" class="btn btn-primary">
+        + Upload File
+    </a>
+</div>
+
+{% if files %}
+
+<div class="notes-grid">
+
+    {% for file in files %}
+
+    <div class="note-card">
+
+        <h3>{{ file.stored_name }}</h3>
+
+        <p>{{ file.filename }}</p>
+
+        <div class="note-actions">
+
+            <a
+                href="/files/view/{{ file.id }}"
+                class="btn btn-secondary">
+                View
+            </a>
+
+            <a
+                href="/files/download/{{ file.id }}"
+                class="btn btn-edit">
+                Download
+            </a>
+
+            <a
+                href="/files/delete/{{ file.id }}"
+                class="btn btn-danger">
+                Delete
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-state">
+    <h2>No Files Found</h2>
+    <p>Start by uploading your first file.</p>
+
+    <a href="{{ url_for('uploadFile') }}" class="btn btn-primary">
+        + Upload Your First File
+    </a>
+</div>
+
+{% endif %}
+
+{% endblock %}
