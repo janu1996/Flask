@@ -707,20 +707,52 @@ def delete_notes(note_id):
                                notes=notes)
 
 
+
 #------------------------------
 #           FILES
 #-----------------------------
+#fetch the files 
+def GetFilesbyUserId(userid):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor = connection.cursor(dictionary=True)
+            #dictionary = True enables filename to be printed
+            #in files page as it fetches fileid and storedname
+            get_file_by_userid = """select * from file_data
+            where user_id=%s;"""
+            cursor.execute(get_file_by_userid,(userid,))
+            files=cursor.fetchall()
+            cursor.close()
+            connection.close()
+            return True,files
+    except Exception as e:
+        return False,f'Exception raised in Files:{e}'
+
 @app.route('/files')
 def myfiles():
     if "id" not in session:
         return redirect('/login')
     if request.method == "GET":
-        return render_template('files.html')
+        userid=session['id']
+        #get all the files
+        status,files = GetFilesbyUserId(userid=userid)
+        print(files)
+        print(status)
+        if status:
+            return render_template('files.html',
+                                   files=files)
+        else:
+            msg = files
+            flash(msg,"err")
+            return render_template('files.html')
 
 #check file exist in allowed types
 def checkFileAllowed(filename):
     allow_types = ['pdf','doc','jpeg','jpg','png','svg','csv',
-                   'xml','txt']
+                   'xml','txt','py']
     if "." in filename and filename.split('.')[1] in allow_types:
         return True
     else:
@@ -749,7 +781,8 @@ def checkFileDuplicate(userid,filename):
         return False,f"Exception raised in file: {e}"
 
 #insert files into table
-def UploadFileInDB(userid,filename,stored_name,type,size,path):
+def UploadFileInDB(userid,
+                   filename,stored_name,type,size,path):
     try:
         connection = getConnectionWithDB()
         if connection == "Connection Failed":
@@ -757,8 +790,9 @@ def UploadFileInDB(userid,filename,stored_name,type,size,path):
         else:
             cursor = connection.cursor()
             insert_filedata_query= """insert into file_data
-            (user_id,original_name,stored_name,mime_type,
-            size_bytes,storage_path) values(%s,%s,%s,%s,%s,%s);"""
+                        (user_id,original_name,stored_name,mime_type,
+                         size_bytes,storage_path) 
+                         values(%s,%s,%s,%s,%s,%s);"""
             cursor.execute(insert_filedata_query,
                            (userid,filename,stored_name,
                             type,size,path))
@@ -767,7 +801,7 @@ def UploadFileInDB(userid,filename,stored_name,type,size,path):
             connection.close()
             return True,"File Uploaded"
     except Exception as e:
-        return False,f'Exceptiom raised in File upload:{e}'
+        return False,f'Exception raised in File upload:{e}'
 
 #get file metadata by file_id
 def getFileByFileId(fileid):
@@ -790,6 +824,7 @@ def getFileByFileId(fileid):
 
 
 
+
 #upload file route
 @app.route('/files/upload',methods=['GET','POST'])
 def uploadFile():
@@ -800,46 +835,121 @@ def uploadFile():
     #post request
     if request.method == "POST":
         #get file from form
-        file = request.form.get('file')
+        file = request.files.get('file')
         if file and file.filename != "":
             #check file in allowed types
             filename = file.filename
             if checkFileAllowed(filename=filename):
                 #check the valid allowed types of files
                 filename_secure=secure_filename(filename)
-                file.save('/upload')
-                file_size = os.path.getsize(filename=
-                                            f'upload/{filename}')
-                file_type = filename.split('.')[1]
-                #insert file metadata in database
-                #get file metadata
-                #store filemeta data in database
-                #redirect to files dashboard
+                #check the file in allowed types
+                status,msg = checkFileDuplicate(
+                    userid=session['id'],
+                    filename= filename_secure
+                )
+                print(filename_secure)
+                if status == True:
+                    #save the file
+                    upload_path = os.path.join('upload',
+                                               filename_secure)
+                    file.save(upload_path) 
+                    #get the file information 
+                    file_size = os.path.getsize(upload_path)
+                    file_type = os.path.splitext(filename_secure)[1].lower().lstrip('.')
+                    #path stored in the DB 
+                    filepath = f'/upload/{filename_secure}'
+                    #insert file metadata in database
+                    status,msg = UploadFileInDB(userid=session['id'],
+                                                filename=filename,
+                                                stored_name=filename_secure,
+                                                type=file_type,
+                                                size=file_size,
+                                                path=filepath)
+                    if status==True:
+                        flash(msg,"msg")
+                        return redirect('/files')
+                    else:
+                        flash(msg,"err")
+                        return redirect('/files')
+                else:
+                    flash(msg,"err")
+                    return redirect('/files')
+            else:
+                flash("File type not allowed","err")
+                return redirect('/files')
+            #render_template -->returns HTML directly to currentURL
+            #redirect --> instructs the browser to make a new requesr to 
+            #a different URL
+        else:
+            flash("File not uploaded","err")
+            return redirect('/files')
+
+#get file metadata by file id
+def getFileByFileId(fileid):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor = connection.cursor(dictionary=True)
+            get_file_by_userid = """select * from file_data
+                                where id = %s;"""
+            cursor.execute(get_file_by_userid,(fileid,))
+            file=cursor.fetchone()
+            cursor.close()
+            connection.close()
+            return True,file
+    except Exception as e:
+        return False,f'Exception rasied in View File:{e}'
 
 
-    
+import mimetypes
 #view file
 @app.route('/files/view/<file_id>')
-def viewFile():
+def viewFile(file_id):
     if "id" not in session:
         return redirect('/login')
-    pass
+    if request.method == "GET":
+        #get the file by file_id
+        status,file = getFileByFileId(fileid=file_id)
+        if status == True:
+            secure_filename = file['stored_name']
+            mime_type,_ = mimetypes.guess_type(secure_filename)
+            return send_file(
+                f'upload/{secure_filename}',
+                mimetype=mime_type,
+                as_attachment=False
+            )
+        else:
+            flash(file,'err')
+            return redirect('/files')
 
 #download file
 @app.route('/files/download/<file_id>')
-def downloadFile():
+def downloadFile(file_id):
     if "id" not in session:
         return redirect('/login')
-    pass
-
+    if request.method == "GET":
+        #get file by file_id
+        status,file = getFileByFileId(fileid=file_id)
+        if status == True:
+            secure_filename = file['stored_name']
+            mime_type, _ = mimetypes.guess_type(
+                secure_filename)
+            return send_file(
+                f'upload/{secure_filename}',
+                mimetype=mime_type,
+                as_attachment=True
+            )
+        else:
+            flash(file,"err")
+            return redirect('/files')
 #delete file
 @app.route('/files/delete/<file_id>')
 def deleteFile():
     if "id" not in session:
         return redirect('/login')
     pass
-
-
 
 #logout route
 @app.route("/logout",methods=['GET'])

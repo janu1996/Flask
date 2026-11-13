@@ -2084,3 +2084,30 @@ a:hover {
     border-radius: 7px;
     cursor: pointer;
 }
+
+/* File Upload Styling */
+
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 14px;
+    background: rgba(11, 16, 32, 0.85);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.form-group input[type="file"]::file-selector-button {
+    background: linear-gradient(135deg, #7c3aed, #6366f1);
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    margin-right: 15px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+    opacity: 0.85;
+}
