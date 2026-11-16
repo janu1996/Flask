@@ -1,2 +1,12 @@
 .venv
 .env
+# Uploaded user files
+SNM-Project-Template-main/SNM-Project-Template-main/upload/
+
+# ZIP backup files
+*.zip
+SNM-Project-Template-main/SNM-Project-Template-main/upload/
+config.py
+.env
+/upload/
+*.zip

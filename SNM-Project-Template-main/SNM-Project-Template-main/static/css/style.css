@@ -2111,3 +2111,227 @@ a:hover {
 .form-group input[type="file"]::file-selector-button:hover {
     opacity: 0.85;
 }
+
+/* ==============================
+   SNS DASHBOARD DESIGN
+============================== */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    padding: 35px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    border-radius: 18px;
+    background: linear-gradient(
+        135deg,
+        rgba(30, 41, 90, 0.85),
+        rgba(49, 30, 91, 0.65)
+    );
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-label {
+    display: inline-block;
+    color: #a5b4fc;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.dashboard-welcome h1 {
+    color: #ffffff;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.dashboard-welcome p {
+    color: #cbd5e1;
+    font-size: 15px;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dashboard-actions .btn {
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+
+/* Statistics Cards */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 16px;
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(129, 140, 248, 0.6);
+}
+
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    background: rgba(99, 102, 241, 0.18);
+    font-size: 25px;
+}
+
+.stat-card h3 {
+    color: #ffffff;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.stat-card p {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+
+/* Recent Notes */
+
+.recent-notes-section {
+    margin-top: 20px;
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.section-heading h2 {
+    color: #ffffff;
+    font-size: 23px;
+    margin-bottom: 7px;
+}
+
+.section-heading p {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.view-all-link {
+    color: #a5b4fc;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.view-all-link:hover {
+    color: #c4b5fd;
+}
+
+
+/* Note Card Enhancements */
+
+.note-card {
+    position: relative;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    background: rgba(30, 41, 59, 0.7);
+    border-radius: 15px;
+    padding: 23px;
+    transition: 0.3s ease;
+}
+
+.note-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(129, 140, 248, 0.5);
+}
+
+.note-card-icon {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.note-card h3 {
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.note-card p {
+    color: #cbd5e1;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+
+/* Empty State */
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.empty-state .btn {
+    display: inline-block;
+    margin-top: 15px;
+    text-decoration: none;
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 25px;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 24px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .dashboard-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .dashboard-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+}

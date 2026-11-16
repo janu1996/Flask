@@ -3,13 +3,20 @@ import mysql.connector as sql
 import random
 import smtplib
 from email.message import EmailMessage
-from flask import Flask,render_template,redirect,url_for,request,session
+from flask import Flask,render_template,redirect,url_for,request,session,flash,send_file
 import bcrypt
+from werkzeug.utils import secure_filename
+import os
+import sys
+
+#create an upload folder if not exists
+if not os.path.exists('upload'):
+    os.mkdir('upload') #it will create a folder..
 #Setting up a secure way to generate and verify timed
 #tokens in Flask app
 from itsdangerous import URLSafeTimedSerializer,BadSignature,TimedSerializer
+
 app = Flask(__name__)
-import os
 app.secret_key = os.environ.get("SECRET_KEY")
 
 DBConfig = Config()
@@ -488,15 +495,61 @@ def login():
         else:
             return redirect('/login') 
 
+#total notes count
+#total files count
+def getFilesAndNotesCount(user_id):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor = connection.cursor()
+            get_notes_count = """SELECT COUNT(*) FROM NOTES 
+                             WHERE USER_ID = %s;"""
+            cursor.execute(get_notes_count,(user_id,))
+            notes_count=cursor.fetchone()[0]
+            get_files_count="""select count(*) from file_data
+                            where user_id=%s;"""
+            cursor.execute(get_files_count,(user_id,))
+            files_count = cursor.fetchone()[0]
+            cursor.close()
+            connection.close()
+            return notes_count,files_count
+    except Exception as e:
+        return False,f'Exception raised in count:{e}'
+
+def recentNotes(user_id):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor= connection.cursor(dictionary=True)
+            get_recent_notes = """SELECT * FROM NOTES
+                              WHERE USER_ID=%s ORDER BY updated_at
+                              DESC LIMIT 3;"""
+            cursor.execute(get_recent_notes,(user_id,))
+            recent_notes = cursor.fetchall()
+            cursor.close()
+            connection.close()
+            return True,recent_notes
+    except Exception as e:
+        return False,f"Exception raised in recent notes:{e}"
+    
 @app.route('/dashboard')
 def dashboard():
     #if the user data is not in the session redirect to login page
     if "id" not in session:
         return redirect("/login")
+    userid = session['id']
+    notes_count,files_count = getFilesAndNotesCount(userid)
+    _,recent_notes = recentNotes(userid)
+    print(recent_notes)
     return render_template('dashboard.html',
-                           username=session['name'])
-
-
+                           username=session['name'],
+                           total_notes = notes_count,
+                           total_files=files_count,
+                           notes=recent_notes)
 #profile route
 @app.route('/user/profile',methods=['GET'])
 def profile():
@@ -524,16 +577,19 @@ def verify():
 #----------------------------
 #       Notes Routes
 #-----------------------------
-def getNotesByUserId(user_id):
+def getNotesByUserId(user_id,filename=None):
     try:
         connection = getConnectionWithDB()
         if connection == "Connection Failed":
             return False,"Database connection Failed"
         else:
             cursor = connection.cursor(dictionary=True)
-            get_notes_by_id="""SELECT * FROM NOTES WHERE
-            USER_ID = %s;"""
-            cursor.execute(get_notes_by_id,(user_id,))
+            query = "select * from notes where user_id=%s"
+            values = [user_id]
+            if filename:
+                query +=" and title LIKE %s"
+                values.append("%" + filename + "%")
+            cursor.execute(query,tuple(values))
             notes = cursor.fetchall()
             connection.commit()
             cursor.close()
@@ -541,22 +597,29 @@ def getNotesByUserId(user_id):
             return True,notes
     except Exception as e:
         return False,f'Exception raised in add notes:{e}' 
-
 @app.route('/notes',methods=['GET','POST'])
 def mynotes():
     if "id" not in session:
         return redirect('/login')
     if request.method == "GET":
-        #get user notes from the database
-        id = session['id']
-        print(id)
-        status,notes = getNotesByUserId(user_id=id)
-        print(notes)
+        status,notes = getNotesByUserId(user_id=session['id'])
         if status == True:
             return render_template("notes.html",
                                    notes = notes)
         else:
             return render_template('notes.html',err=notes)
+    if request.method == "POST":
+        notes_name = request.form.get('searchnotes','').strip()
+        status,notes = getNotesByUserId(
+            user_id=session['id'],
+            filename=notes_name
+        )
+        if status == True:
+            return render_template('notes.html',notes=notes)
+        else:
+            return render_template('notes.html',err=notes)
+
+    
 #insert notes records in table
 def addNotesRecord(user_id:int,title:str,content:str):
     try:
@@ -640,7 +703,8 @@ def updateNotesByID(notes_id:int,title:str,content:str):
             update_notes_by_id = """update notes 
             set title=%s,content=%s where id=%s;"""
             cursor.execute(update_notes_by_id,(title,
-                                               content,notes_id))
+                                               content,
+                                               notes_id))
             connection.commit()
             cursor.close()
             connection.close()
@@ -706,13 +770,11 @@ def delete_notes(note_id):
         return render_template('notes.html',err=msg,
                                notes=notes)
 
-
-
 #------------------------------
 #           FILES
 #-----------------------------
 #fetch the files 
-def GetFilesbyUserId(userid):
+def GetFilesbyUserId(userid,filename=None):
     try:
         connection = getConnectionWithDB()
         if connection == "Connection Failed":
@@ -721,17 +783,23 @@ def GetFilesbyUserId(userid):
             cursor = connection.cursor(dictionary=True)
             #dictionary = True enables filename to be printed
             #in files page as it fetches fileid and storedname
-            get_file_by_userid = """select * from file_data
-            where user_id=%s;"""
-            cursor.execute(get_file_by_userid,(userid,))
+            query = "SELECT * FROM file_data WHERE user_id = %s"
+            values = [userid]
+            if filename:
+                query += " AND stored_name LIKE %s"
+                values.append("%" + filename + "%")
+            #get_file_by_userid = """select * from file_data
+            #where user_id=%s;"""
+            #cursor.execute(get_file_by_userid,(userid,))
+            cursor.execute(query, tuple(values))
             files=cursor.fetchall()
             cursor.close()
             connection.close()
             return True,files
     except Exception as e:
-        return False,f'Exception raised in Files:{e}'
+        return False,f'Exception raised in Search Files:{e}'
 
-@app.route('/files')
+@app.route('/files',methods=['GET','POST'])
 def myfiles():
     if "id" not in session:
         return redirect('/login')
@@ -747,6 +815,17 @@ def myfiles():
         else:
             msg = files
             flash(msg,"err")
+            return render_template('files.html')
+    if request.method == "POST":
+        filename = request.form.get('searchfiles', '').strip()
+        status, files = GetFilesbyUserId(
+            userid=session['id'],
+            filename=filename
+        )
+        if status == True:
+            return render_template('files.html', files=files)
+        else:
+            flash(files, "err")
             return render_template('files.html')
 
 #check file exist in allowed types
@@ -821,8 +900,6 @@ def getFileByFileId(fileid):
     except Exception as e:
         return False,f'Exception raised in View files:{e}'
     
-
-
 
 
 #upload file route
@@ -902,6 +979,24 @@ def getFileByFileId(fileid):
     except Exception as e:
         return False,f'Exception rasied in View File:{e}'
 
+#delete file 
+#get file metadata by file id
+def deleteFileByFileId(fileid):
+    try:
+        connection = getConnectionWithDB()
+        if connection == "Connection Failed":
+            return False,"Database Connection Failed"
+        else:
+            cursor = connection.cursor()
+            delete_file_by_userid = """delete from file_data
+                                where id = %s;"""
+            cursor.execute(delete_file_by_userid,(fileid,))
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return True,"File Deleted Successfully"
+    except Exception as e:
+        return False,f'Exception raised in View File:{e}'
 
 import mimetypes
 #view file
@@ -946,11 +1041,18 @@ def downloadFile(file_id):
             return redirect('/files')
 #delete file
 @app.route('/files/delete/<file_id>')
-def deleteFile():
+def deleteFile(file_id):
     if "id" not in session:
         return redirect('/login')
-    pass
-
+    if request.method == "GET":
+            #get file by file_id
+            status,msg = deleteFileByFileId(fileid=file_id)
+            if status == True:
+                flash(msg,"msg")
+                return redirect('/files')
+            else:
+                flash(msg,"err")
+                return redirect('/files')
 #logout route
 @app.route("/logout",methods=['GET'])
 def logout():
