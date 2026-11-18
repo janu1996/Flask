@@ -17,7 +17,7 @@ if not os.path.exists('upload'):
 from itsdangerous import URLSafeTimedSerializer,BadSignature,TimedSerializer
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = "Codegnan@123"
 
 DBConfig = Config()
 from_email = DBConfig.from_email
