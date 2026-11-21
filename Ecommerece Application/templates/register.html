@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Register | NEXORA{% endblock %}
+{% block content %}
+<section class="nx-auth-section nx-register-section">
+    <div class="nx-auth-glow nx-auth-glow-one"></div><div class="nx-auth-glow nx-auth-glow-two"></div>
+    <div class="container">
+        <div class="nx-auth-layout nx-register-layout">
+            <div class="nx-auth-aside">
+                <a href="{{ url_for('home') }}" class="nx-auth-logo"><i class="bi bi-bag-heart-fill"></i> NEXORA<span>.</span></a>
+                <div class="nx-aside-message"><span>COME ON IN</span><h2>Make space<br>for <em>something new.</em></h2><p>Join NEXORA and turn everyday browsing into your next great discovery.</p></div>
+                <div class="nx-aside-bottom"><i class="bi bi-heart-fill"></i> Your next favourite could be one click away.</div>
+                <div class="nx-aside-decoration">N</div>
+            </div>
+            <div class="nx-auth-main">
+                <div class="nx-auth-heading"><span class="nx-section-label">LET'S GET STARTED</span><h1>Create your <em>account.</em></h1><p>Fill in your details to become part of NEXORA.</p></div>
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="mb-3"><label for="name" class="form-label">Full name</label><div class="nx-input-wrap"><i class="bi bi-person"></i><input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" autocomplete="name" required></div></div>
+                    <div class="mb-3"><label for="email" class="form-label">Email address</label><div class="nx-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" autocomplete="email" required></div></div>
+                    <div class="mb-3"><label for="phone" class="form-label">Phone number <small class="nx-optional">OPTIONAL</small></label><div class="nx-input-wrap"><i class="bi bi-telephone"></i><input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number" autocomplete="tel"></div></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label for="password" class="form-label">Password</label><div class="nx-input-wrap"><i class="bi bi-lock"></i><input type="password" id="password" name="password" class="form-control" placeholder="Create password" autocomplete="new-password" required></div></div>
+                        <div class="col-md-6 mb-3"><label for="confirm_password" class="form-label">Confirm password</label><div class="nx-input-wrap"><i class="bi bi-lock-fill"></i><input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Repeat password" autocomplete="new-password" required></div></div>
+                    </div>
+                    <div class="form-check nx-terms mb-4"><input class="form-check-input" type="checkbox" id="terms" name="terms" required><label class="form-check-label" for="terms">I agree to the <a href="#">Terms &amp; Conditions</a></label></div>
+                    <button type="submit" class="btn nx-btn nx-btn-primary nx-auth-submit">Create my account <i class="bi bi-arrow-right"></i></button>
+                </form>
+                <p class="nx-auth-switch">Already registered? <a href="{{ url_for('login') }}">Login here</a></p>
+                <div class="nx-auth-foot"><i class="bi bi-shield-check"></i> Your account details are kept secure.</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

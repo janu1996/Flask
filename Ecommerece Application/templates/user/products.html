@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+
+{% block title %}Products | NEXORA{% endblock %}
+
+{% block content %}
+
+<section class="nx-products-section">
+    <div class="container">
+
+        <!-- Page Heading -->
+        <div class="nx-products-heading">
+            <span class="nx-subtitle">EXPLORE OUR COLLECTION</span>
+            <h1>Discover Our <span>Products</span></h1>
+            <p>Find something amazing for yourself.</p>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row g-4">
+
+            {% for number in range(1, 5) %}
+            <div class="col-6 col-lg-3">
+
+                <div class="nx-product-card">
+
+                    <div class="nx-product-image">
+                        <span class="nx-product-tag">NEW</span>
+
+                        <i class="bi bi-box-seam"
+                           aria-hidden="true"></i>
+                    </div>
+
+                    <div class="nx-product-details">
+                        <p class="nx-product-category">PREMIUM COLLECTION</p>
+
+                        <h2>Premium Product {{ number }}</h2>
+
+                        <div class="nx-product-bottom">
+                            <span class="nx-product-price">₹999</span>
+
+                            <button class="nx-product-btn"
+                                    type="button"
+                                    aria-label="View Premium Product {{ number }}">
+                                <i class="bi bi-arrow-up-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Login | NEXORA{% endblock %}
+{% block content %}
+<section class="nx-auth-section">
+    <div class="nx-auth-glow nx-auth-glow-one"></div><div class="nx-auth-glow nx-auth-glow-two"></div>
+    <div class="container">
+        <div class="nx-auth-layout">
+            <div class="nx-auth-aside">
+                <a href="{{ url_for('home') }}" class="nx-auth-logo"><i class="bi bi-bag-heart-fill"></i> NEXORA<span>.</span></a>
+                <div class="nx-aside-message"><span>YOUR NEXT DISCOVERY AWAITS</span><h2>Good to have<br>you <em>back.</em></h2><p>Your favourites, fresh finds and feel-good shopping are just a sign-in away.</p></div>
+                <div class="nx-aside-bottom"><i class="bi bi-stars"></i> Find a little joy in the everyday.</div>
+                <div class="nx-aside-decoration">N</div>
+            </div>
+            <div class="nx-auth-main">
+                <div class="nx-auth-heading"><span class="nx-section-label">WELCOME BACK</span><h1>Sign in to <em>NEXORA.</em></h1><p>Enter your details below to continue.</p></div>
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-4"><label for="email" class="form-label">Email address</label><div class="nx-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" autocomplete="email" required></div></div>
+                    <div class="mb-3"><label for="password" class="form-label">Password</label><div class="nx-input-wrap"><i class="bi bi-lock"></i><input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required></div></div>
+                    <div class="nx-auth-options"><label class="form-check"><input class="form-check-input" type="checkbox" id="remember" name="remember"><span class="form-check-label">Remember me</span></label><a href="#" class="nx-auth-link">Forgot password?</a></div>
+                    <button type="submit" class="btn nx-btn nx-btn-primary nx-auth-submit">Login to your account <i class="bi bi-arrow-right"></i></button>
+                </form>
+                <p class="nx-auth-switch">Don't have an account? <a href="{{ url_for('register') }}">Create one</a></p>
+                <div class="nx-auth-foot"><i class="bi bi-shield-check"></i> Your account details are kept secure.</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

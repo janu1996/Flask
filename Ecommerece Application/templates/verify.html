@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Verify Email | NEXORA{% endblock %}
+{% block content %}
+<section class="nx-auth-section nx-verify-section">
+    <div class="nx-auth-glow nx-auth-glow-one"></div><div class="nx-auth-glow nx-auth-glow-two"></div>
+    <div class="container">
+        <div class="nx-verify-card">
+            <a href="{{ url_for('home') }}" class="nx-verify-brand">NEXORA<span>.</span></a>
+            <div class="nx-verify-icon"><i class="bi bi-envelope-check"></i></div>
+            <span class="nx-section-label">ALMOST THERE</span>
+            <h1>Check your <em>inbox.</em></h1>
+            <p class="nx-verify-copy">We've sent a six-digit code to <strong>{{ email }}</strong>. Enter the code below to verify your email address.</p>
+            <div class="nx-expiry-note"><i class="bi bi-clock-history"></i> Your verification code expires in 10 minutes.</div>
+            <form method="POST" action="{{ url_for('verify') }}">
+                <label for="otp" class="form-label d-block text-start">Six-digit verification code</label>
+                <div class="nx-input-wrap nx-otp-wrap"><i class="bi bi-shield-lock"></i><input type="text" id="otp" name="otp" class="form-control nx-otp-input" placeholder="000000" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></div>
+                <button type="submit" class="btn nx-btn nx-btn-primary nx-auth-submit mt-4">Verify my email <i class="bi bi-arrow-right"></i></button>
+            </form>
+            <form method="POST" action="{{ url_for('resend_verification') }}" class="nx-resend-form">
+                <span>Didn't get the email?</span>
+                <button type="submit" class="btn btn-link">Send a new code</button>
+            </form>
+            <a href="{{ url_for('home') }}" class="nx-back-link"><i class="bi bi-arrow-left"></i> Back to NEXORA</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

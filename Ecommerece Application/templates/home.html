@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}NEXORA | Find Your Everyday Favourite{% endblock %}
+
+{% block content %}
+<section class="nx-hero">
+    <div class="nx-hero-shape nx-shape-a"></div>
+    <div class="nx-hero-shape nx-shape-b"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-6 nx-hero-copy">
+                <span class="nx-overline"><span></span> THE JOY OF FINDING SOMETHING NEW</span>
+                <h1>Little things.<br><em>Big happy.</em></h1>
+                <p>Meet your new favourite place to discover everyday essentials, standout styles and products worth sharing.</p>
+                <div class="nx-hero-actions">
+                    <a href="/admin/dashboard" class="btn nx-btn nx-btn-light">Start exploring <i class="bi bi-arrow-up-right"></i></a>
+                    <a href="#categories" class="nx-quiet-link">Browse categories <i class="bi bi-arrow-down-right"></i></a>
+                </div>
+                <div class="nx-hero-note">
+                    <span class="nx-note-icon"><i class="bi bi-sparkles"></i></span>
+                    <span><strong>A fresh take on online shopping</strong><small>Discover more of what you love.</small></span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="nx-hero-visual">
+                    <div class="nx-visual-backdrop"></div>
+                    <div class="nx-visual-tile nx-tile-main">
+                        <div class="nx-tile-top"><span>N / 01</span><i class="bi bi-stars"></i></div>
+                        <div class="nx-bag-illustration"><i class="bi bi-bag-heart-fill"></i></div>
+                        <div class="nx-tile-caption"><small>THE NEXORA COLLECTION</small><h3>Find your<br>kind of wonderful.</h3></div>
+                    </div>
+                    <div class="nx-floating-chip nx-chip-one"><i class="bi bi-heart-fill"></i> Made to be loved</div>
+                    <div class="nx-floating-chip nx-chip-two"><i class="bi bi-lightning-charge-fill"></i> Fresh finds daily</div>
+                    <span class="nx-visual-spark nx-spark-one">✳</span>
+                    <span class="nx-visual-spark nx-spark-two">✦</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container nx-hero-footer"><span>CURATED FOR YOUR EVERYDAY</span><span class="nx-footer-rule"></span><span>SCROLL TO EXPLORE <i class="bi bi-arrow-down"></i></span></div>
+</section>
+
+<section class="nx-benefits">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-6 col-md-3"><div class="nx-benefit"><i class="bi bi-truck"></i><span>Convenient delivery</span></div></div>
+            <div class="col-6 col-md-3"><div class="nx-benefit"><i class="bi bi-shield-check"></i><span>Secure shopping</span></div></div>
+            <div class="col-6 col-md-3"><div class="nx-benefit"><i class="bi bi-stars"></i><span>Curated finds</span></div></div>
+            <div class="col-6 col-md-3"><div class="nx-benefit"><i class="bi bi-headset"></i><span>Friendly support</span></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="nx-section" id="categories">
+    <div class="container">
+        <div class="nx-section-head">
+            <div><span class="nx-section-label">A LITTLE BIT OF EVERYTHING</span><h2>What are you<br><em>in the mood for?</em></h2></div>
+            <p>From useful everyday picks to something just because — start with a category and see where it takes you.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-6 col-lg-3"><a href="#" class="nx-category nx-category-purple"><span class="nx-category-number">01</span><div class="nx-category-icon"><i class="bi bi-phone"></i></div><h5>Electronics</h5><span class="nx-category-foot">Explore tech <i class="bi bi-arrow-up-right"></i></span></a></div>
+            <div class="col-6 col-lg-3"><a href="#" class="nx-category nx-category-coral"><span class="nx-category-number">02</span><div class="nx-category-icon"><i class="bi bi-person-standing-dress"></i></div><h5>Fashion</h5><span class="nx-category-foot">Find your style <i class="bi bi-arrow-up-right"></i></span></a></div>
+            <div class="col-6 col-lg-3"><a href="#" class="nx-category nx-category-green"><span class="nx-category-number">03</span><div class="nx-category-icon"><i class="bi bi-house-heart"></i></div><h5>Home & Living</h5><span class="nx-category-foot">Make it yours <i class="bi bi-arrow-up-right"></i></span></a></div>
+            <div class="col-6 col-lg-3"><a href="#" class="nx-category nx-category-blue"><span class="nx-category-number">04</span><div class="nx-category-icon"><i class="bi bi-watch"></i></div><h5>Accessories</h5><span class="nx-category-foot">Little details <i class="bi bi-arrow-up-right"></i></span></a></div>
+        </div>
+    </div>
+</section>
+
+<section class="nx-section nx-featured" id="featured">
+    <div class="container">
+        <div class="nx-section-head nx-featured-head">
+            <div><span class="nx-section-label">A FEW GOOD FINDS</span><h2>Picked with <em>you in mind.</em></h2></div>
+            <a href="#" class="nx-view-link">See everything <i class="bi bi-arrow-up-right"></i></a>
+        </div>
+        <div class="row g-4">
+            {% for i in "1234" %}
+            <div class="col-6 col-lg-3">
+                <div class="nx-product-card h-100">
+                    <div class="nx-product-art nx-product-art-{{ loop.index }}">
+                        <span class="nx-product-tag">{% if loop.first %}BEST LOVED{% elif loop.last %}JUST IN{% else %}NEXORA PICK{% endif %}</span>
+                        <i class="bi {% if loop.index == 1 %}bi-headphones{% elif loop.index == 2 %}bi-watch{% elif loop.index == 3 %}bi-backpack{% else %}bi-camera{% endif %}"></i>
+                        <button class="nx-wish" type="button" aria-label="Add to wishlist"><i class="bi bi-heart"></i></button>
+                    </div>
+                    <div class="nx-product-info">
+                        <span>THE EVERYDAY EDIT</span>
+                        <h5>Premium Product {{ i }}</h5>
+                        <div class="nx-product-bottom"><strong>₹999</strong><button type="button" aria-label="Add to cart"><i class="bi bi-bag-plus"></i></button></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="nx-section nx-story-section" id="about">
+    <div class="container">
+        <div class="nx-story-panel">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-6">
+                    <span class="nx-section-label nx-label-light">MORE THAN JUST A STORE</span>
+                    <h2>Good finds make<br><em>good days.</em></h2>
+                    <p>NEXORA is all about making discovery feel effortless. Browse, find something you love and enjoy the little excitement of something new.</p>
+                    <a href="#categories" class="btn nx-btn nx-btn-light">Explore NEXORA <i class="bi bi-arrow-up-right"></i></a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="nx-story-points">
+                        <div><span>01</span><i class="bi bi-compass"></i><section><strong>Explore freely</strong><small>Discover collections across categories.</small></section></div>
+                        <div><span>02</span><i class="bi bi-heart"></i><section><strong>Choose what you love</strong><small>Find products that fit your everyday.</small></section></div>
+                        <div><span>03</span><i class="bi bi-box-seam"></i><section><strong>Enjoy the experience</strong><small>A simple, welcoming way to shop.</small></section></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
